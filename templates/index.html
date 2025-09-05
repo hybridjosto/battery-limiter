@@ -5,32 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EV Charge Calculator</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            max-width: 500px;
-            margin: 2em auto;
-            padding: 0 1em;
-        }
-        .form-group {
-            margin-bottom: 1em;
-        }
-        label {
-            display: block;
-            margin-bottom: 0.5em;
-        }
-        input, select {
-            width: 100%;
-            padding: 0.5em;
-            box-sizing: border-box;
-        }
-        .result {
-            margin-top: 1em;
-            padding: 1em;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
