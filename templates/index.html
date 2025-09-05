@@ -1,0 +1,157 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EV Charge Calculator</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 500px;
+            margin: 2em auto;
+            padding: 0 1em;
+        }
+        .form-group {
+            margin-bottom: 1em;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5em;
+        }
+        input, select {
+            width: 100%;
+            padding: 0.5em;
+            box-sizing: border-box;
+        }
+        .result {
+            margin-top: 1em;
+            padding: 1em;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>EV Charge Calculator</h1>
+
+    <div class="form-group">
+        <label for="car-select">Select Car:</label>
+        <select id="car-select"></select>
+    </div>
+
+    <div class="form-group">
+        <label for="current-charge">Current Charge (%):</label>
+        <input type="number" id="current-charge" min="0" max="100">
+    </div>
+
+    <button onclick="calculateCharge()">Calculate</button>
+
+    <div class="result" id="result-display" style="display: none;">
+        <h3>kWh Needed: <span id="kwh-needed"></span></h3>
+    </div>
+
+    <hr style="margin: 2em 0;">
+
+    <h2>Add a New Car</h2>
+
+    <div class="form-group">
+        <label for="car-name">Car Name:</label>
+        <input type="text" id="car-name">
+    </div>
+
+    <div class="form-group">
+        <label for="battery-capacity">Battery Capacity (kWh):</label>
+        <input type="number" id="battery-capacity">
+    </div>
+
+    <button onclick="addCar()">Add Car</button>
+
+    <script>
+        const carSelect = document.getElementById('car-select');
+        const currentChargeInput = document.getElementById('current-charge');
+        const resultDisplay = document.getElementById('result-display');
+        const kwhNeededSpan = document.getElementById('kwh-needed');
+        const carNameInput = document.getElementById('car-name');
+        const batteryCapacityInput = document.getElementById('battery-capacity');
+
+        async function fetchCars() {
+            const response = await fetch('/cars');
+            const cars = await response.json();
+            carSelect.innerHTML = '';
+            cars.forEach(car => {
+                const option = document.createElement('option');
+                option.value = car.capacity;
+                option.textContent = car.name;
+                carSelect.appendChild(option);
+            });
+        }
+
+        async function calculateCharge() {
+            const selectedCar = carSelect.options[carSelect.selectedIndex];
+            if (!selectedCar) {
+                alert('Please add a car first.');
+                return;
+            }
+
+            const capacity = selectedCar.value;
+            const currentCharge = currentChargeInput.value;
+
+            const response = await fetch('/calculate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    capacity: capacity, 
+                    current_charge: currentCharge 
+                })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                kwhNeededSpan.textContent = result.kwh_needed;
+                resultDisplay.style.display = 'block';
+            } else {
+                alert(`Error: ${result.error}`);
+            }
+        }
+
+        async function addCar() {
+            const name = carNameInput.value;
+            const capacity = batteryCapacityInput.value;
+
+            if (!name || !capacity) {
+                alert('Please enter both car name and battery capacity.');
+                return;
+            }
+
+            const response = await fetch('/cars', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    name: name, 
+                    capacity: parseFloat(capacity) 
+                })
+            });
+
+            if (response.ok) {
+                carNameInput.value = '';
+                batteryCapacityInput.value = '';
+                fetchCars();
+            } else {
+                const result = await response.json();
+                alert(`Error: ${result.error}`);
+            }
+        }
+
+        // Fetch cars on page load
+        fetchCars();
+    </script>
+
+</body>
+</html>

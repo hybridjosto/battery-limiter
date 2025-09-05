@@ -1,0 +1,12 @@
+[Unit]
+Description=My Flask Application
+After=network.target
+
+[Service]
+User=pi
+WorkingDirectory=/path/to/your/project
+ExecStart=/usr/bin/pipenv run python app.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
