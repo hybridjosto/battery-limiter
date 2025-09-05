@@ -28,62 +28,25 @@ To run the tests:
 pipenv run python -m unittest test_app.py
 ```
 
-## Deploying on a Raspberry Pi (or other Linux server)
+## Running the Application in Production
 
-To keep the server running after you exit your SSH session, you have a couple of options.
+To run the application with a production-ready WSGI server like Gunicorn:
 
-### Method 1: Using `nohup` (the simple way)
-
-The `nohup` command (no hang up) is a simple way to run a command that will ignore the hangup signal, which is sent to processes when a terminal is closed.
-
-1. **Navigate to your project directory:**
-   ```bash
-   cd /path/to/your/project
-   ```
-
-2. **Run the application with `nohup`:**
-   ```bash
-   nohup pipenv run python app.py &
-   ```
-
-The server will now be running in the background, and you can safely exit your SSH session. The output of the application will be redirected to a file named `nohup.out`.
-
-You can check the output with:
 ```bash
-cat nohup.out
+pipenv run gunicorn --workers 3 --bind 0.0.0.0:8888 wsgi:app
 ```
 
-### Method 2: Creating a `systemd` service (the robust way)
+## Deploying on a Raspberry Pi (or other Linux server)
 
-For a more robust solution, you can create a `systemd` service. This will allow the application to start automatically on boot, restart if it crashes, and manage logging more effectively.
+For a robust deployment, you should run the application as a `systemd` service. This will allow the application to start automatically on boot and restart if it crashes.
 
-1. **Create a service file:**
+1. **Copy the `my-app.service` file to the systemd directory:**
 
-   Create a file named `my-app.service` with the following content:
-
-   ```ini
-   [Unit]
-   Description=My Flask Application
-   After=network.target
-
-   [Service]
-   User=pi
-   WorkingDirectory=/path/to/your/project
-   ExecStart=/usr/bin/pipenv run python app.py
-   Restart=always
-
-   [Install]
-   WantedBy=multi-user.target
-   ```
-
-   **Important:** You will need to edit this file and replace `/path/to/your/project` with the actual path to your project directory on the Raspberry Pi. You may also need to change the `User` to your username if it's not `pi`.
-
-2. **Move the service file to the systemd directory:**
    ```bash
-   sudo mv my-app.service /etc/systemd/system/my-app.service
+   sudo cp my-app.service /etc/systemd/system/
    ```
 
-3. **Reload `systemd`, enable, and start the service:**
+2. **Reload `systemd`, enable, and start the service:**
    ```bash
    sudo systemctl daemon-reload
    sudo systemctl enable my-app.service

@@ -1,11 +1,12 @@
 [Unit]
-Description=My Flask Application
+Description=Gunicorn instance to serve my-app
 After=network.target
 
 [Service]
 User=pi
-WorkingDirectory=/path/to/your/project
-ExecStart=/usr/bin/pipenv run python app.py
+Group=www-data
+WorkingDirectory=/Users/josh/my-code/battery
+ExecStart=/opt/homebrew/bin/pipenv run gunicorn --workers 3 --bind unix:my-app.sock -m 007 wsgi:app
 Restart=always
 
 [Install]
