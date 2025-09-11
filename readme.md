@@ -20,6 +20,18 @@ pipenv run python app.py
 
 The application will be available at `http://localhost:8888`.
 
+### Logging
+
+The app logs basic information by default. To troubleshoot issues, set the
+`LOG_LEVEL` environment variable to `DEBUG` before starting the server:
+
+```bash
+LOG_LEVEL=DEBUG pipenv run python app.py
+```
+
+This enables more detailed messages about JSON file access and calculation
+requests, which are helpful when diagnosing problems.
+
 ## Running Tests
 
 To run the tests:
