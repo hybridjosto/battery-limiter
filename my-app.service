@@ -6,6 +6,8 @@ After=network.target
 User=pi
 Group=www-data
 WorkingDirectory=/home/pi/battery-limiter
+Environment="PATH=/home/pi/battery-limiter/venv/bin:$PATH"
+Environment="VIRTUAL_ENV=/home/pi/battery-limiter/venv"
 ExecStart=/home/pi/battery-limiter/venv/bin/gunicorn --workers 3 --bind 0.0.0.0:8888 wsgi:app
 Restart=always
 
