@@ -21,27 +21,31 @@
         <input type="number" id="current-charge" min="0" max="100">
     </div>
 
+    <div class="battery-display">
+        <div id="battery-level" class="battery-level"></div>
+    </div>
+
     <button onclick="calculateCharge()">Calculate</button>
 
     <div class="result" id="result-display" style="display: none;">
         <h3>kWh Needed: <span id="kwh-needed"></span></h3>
     </div>
 
-    <hr style="margin: 2em 0;">
+    <details class="new-car">
+        <summary>Add a New Car</summary>
 
-    <h2>Add a New Car</h2>
+        <div class="form-group">
+            <label for="car-name">Car Name:</label>
+            <input type="text" id="car-name">
+        </div>
 
-    <div class="form-group">
-        <label for="car-name">Car Name:</label>
-        <input type="text" id="car-name">
-    </div>
+        <div class="form-group">
+            <label for="battery-capacity">Battery Capacity (kWh):</label>
+            <input type="number" id="battery-capacity">
+        </div>
 
-    <div class="form-group">
-        <label for="battery-capacity">Battery Capacity (kWh):</label>
-        <input type="number" id="battery-capacity">
-    </div>
-
-    <button onclick="addCar()">Add Car</button>
+        <button onclick="addCar()">Add Car</button>
+    </details>
 
     <script>
         const carSelect = document.getElementById('car-select');
@@ -50,6 +54,7 @@
         const kwhNeededSpan = document.getElementById('kwh-needed');
         const carNameInput = document.getElementById('car-name');
         const batteryCapacityInput = document.getElementById('battery-capacity');
+        const batteryLevel = document.getElementById('battery-level');
 
         async function fetchCars() {
             const response = await fetch('/cars');
@@ -61,6 +66,11 @@
                 option.textContent = car.name;
                 carSelect.appendChild(option);
             });
+        }
+
+        function updateBatteryLevel() {
+            const value = Math.min(Math.max(currentChargeInput.value, 0), 100);
+            batteryLevel.style.width = value + '%';
         }
 
         async function calculateCharge() {
@@ -126,6 +136,8 @@
 
         // Fetch cars on page load
         fetchCars();
+        updateBatteryLevel();
+        currentChargeInput.addEventListener('input', updateBatteryLevel);
     </script>
 
 </body>
