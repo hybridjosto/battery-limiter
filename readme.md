@@ -53,10 +53,11 @@ For a robust deployment, you should run the application as a `systemd` service. 
    sudo systemctl start my-app.service
    ```
 
-   The service file exports the `PATH` and `VIRTUAL_ENV` variables so that
-   the `gunicorn` process runs inside the project's virtual environment.
-   If your virtual environment lives in a different location, update the
-   paths in `my-app.service` accordingly before reloading `systemd`.
+    The service file exports the `VIRTUAL_ENV` variable and uses the
+    virtual environment's `gunicorn` binary so the process runs inside the
+    project's virtual environment. If your virtual environment lives in a
+    different location, update the paths in `my-app.service` accordingly
+    before reloading `systemd`.
 
 Now your application is running as a system service. You can check its status with:
 
