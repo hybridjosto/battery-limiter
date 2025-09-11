@@ -59,6 +59,10 @@ For a robust deployment, you should run the application as a `systemd` service. 
     different location, update the paths in `my-app.service` accordingly
     before reloading `systemd`.
 
+    The unit runs as the `pi` user and uses its default group. If your
+    system uses a different account, adjust the `User` directive (and add a
+    `Group` directive if needed) before reloading `systemd`.
+
 Now your application is running as a system service. You can check its status with:
 
 ```bash
